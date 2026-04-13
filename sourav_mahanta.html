@@ -7,6 +7,65 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
+/* HAMBURGER STYLES */
+.menu-toggle {
+  display: none; /* Hidden on desktop */
+  flex-direction: column;
+  cursor: pointer;
+  gap: 6px;
+  z-index: 101;
+}
+
+.bar {
+  width: 25px;
+  height: 1px;
+  background-color: var(--gold);
+  transition: all 0.3s ease;
+}
+
+/* MOBILE NAV MODIFICATIONS */
+@media (max-width: 900px) {
+  .menu-toggle {
+    display: flex;
+  }
+
+  .nav-links {
+    display: flex; /* Show it now, but off-screen */
+    position: fixed;
+    top: 0;
+    right: -100%; /* Start hidden to the right */
+    flex-direction: column;
+    background: var(--bg2);
+    width: 100%;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    transition: 0.5s;
+    gap: 40px;
+    border-left: 1px solid var(--gold-dim);
+  }
+
+  .nav-links.active {
+    right: 0; /* Slide in */
+  }
+
+  .nav-links a {
+    font-size: 18px; /* Bigger links for thumb-tapping */
+  }
+
+  /* Hamburger Animation to 'X' */
+  .menu-toggle.active .bar:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+  .menu-toggle.active .bar:nth-child(2) {
+    opacity: 0;
+  }
+  .menu-toggle.active .bar:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+}
+
+
   :root {
     --gold: #C9A84C;
     --gold-light: #E8C97A;
@@ -717,18 +776,37 @@
   }
 
   /* Responsive */
-  @media (max-width: 900px) {
-    nav { padding: 20px 30px; }
-    .nav-links { display: none; }
-    section { padding: 70px 30px; }
-    .hero { padding: 0 30px 70px; }
-    .hero-number { display: none; }
-    .stats-bar { grid-template-columns: repeat(2, 1fr); padding: 30px; }
-    .about-grid, .contact-inner, .awards-grid { grid-template-columns: 1fr; gap: 40px; }
-    .expertise-grid, .films-list, .events-list { grid-template-columns: 1fr; }
-    .films-featured { grid-template-columns: 1fr; }
-    footer { flex-direction: column; gap: 16px; text-align: center; }
+/* Enhanced Responsive Design */
+@media (max-width: 1024px) {
+  .expertise-grid { grid-template-columns: repeat(2, 1fr); }
+  .films-list { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  nav { padding: 15px 25px; }
+  .nav-links { display: none; } /* Consider a hamburger menu for production */
+  
+  section { padding: 60px 25px; }
+  
+  .hero { padding: 0 25px 60px; align-items: center; text-align: center; }
+  .hero-number { display: none; }
+  .hero-divider { margin: 24px auto; }
+  .hero-desc { margin: 0 auto; }
+  .hero-cta { justify-content: center; flex-direction: column; }
+  
+  .stats-bar { grid-template-columns: repeat(2, 1fr); padding: 30px 20px; gap: 20px; }
+  .stat-item::after { display: none; }
+  
+  .about-grid, .contact-inner, .awards-grid, .expertise-grid, .films-list, .events-list, .films-featured { 
+    grid-template-columns: 1fr; 
+    gap: 30px; 
   }
+
+  body { cursor: default; } /* Disable custom cursor on touch devices */
+  .cursor, .cursor-ring { display: none; }
+  
+  footer { flex-direction: column; gap: 20px; text-align: center; }
+}
 </style>
 </head>
 <body>
@@ -739,7 +817,12 @@
 <!-- NAV -->
 <nav>
   <a href="#" class="nav-logo">Sourav Mahanta</a>
-  <ul class="nav-links">
+  <div class="menu-toggle" id="mobile-menu">
+    <span class="bar"></span>
+    <span class="bar"></span>
+    <span class="bar"></span>
+  </div>
+  <ul class="nav-links" id="nav-list">
     <li><a href="#about">About</a></li>
     <li><a href="#expertise">Expertise</a></li>
     <li><a href="#films">Films</a></li>
@@ -1192,6 +1275,23 @@
     });
   }, { threshold: 0.5 });
   statObs.observe(document.querySelector('.stats-bar'));
+const menu = document.querySelector('#mobile-menu');
+const menuLinks = document.querySelector('#nav-list');
+
+// Toggle Menu
+menu.addEventListener('click', function() {
+  menu.classList.toggle('active');
+  menuLinks.classList.toggle('active');
+});
+
+// Close menu when a link is clicked
+document.querySelectorAll('.nav-links a').forEach(n => n.addEventListener('click', () => {
+  menu.classList.remove('active');
+  menuLinks.classList.remove('active');
+}));
+
+
+
 </script>
 </body>
 </html>
